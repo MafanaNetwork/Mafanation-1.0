@@ -1,6 +1,7 @@
 package me.TahaCheji.Mafana.itemData.itemLevel.managers;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import me.TahaCheji.Mafana.utils.NBTUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -119,7 +120,23 @@ public class LevelManager {
                     nbt.setInteger("baseHealth", health);
                     nbt.setInteger("baseMana", mana);
                     nbt.setInteger("baseSpeed", speed);
-                    player.setItemInHand(nbt.getItem());
+                    if(NBTUtils.getString(nbt.getItem(), "ItemType").contains("Boots")) {
+                        player.getInventory().setBoots(nbt.getItem());
+                        return;
+                    }
+                    if(NBTUtils.getString(nbt.getItem(), "ItemType").contains("Leggings")) {
+                        player.getInventory().setLeggings(nbt.getItem());
+                        return;
+                    }
+                    if(NBTUtils.getString(nbt.getItem(), "ItemType").contains("Chestplate")) {
+                        player.getInventory().setChestplate(nbt.getItem());
+                        return;
+                    }
+                    if(NBTUtils.getString(nbt.getItem(), "ItemType").contains("Helmet")) {
+                        player.getInventory().setHelmet(nbt.getItem());
+                    } else {
+                        player.getInventory().setItemInMainHand(nbt.getItem());
+                    }
                 }
                 im.setLore(lore);
                 is.setItemMeta(im);

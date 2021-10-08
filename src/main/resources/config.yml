@@ -18,9 +18,9 @@ actionbar:
   msg: '&5⚔ Strength: &d%cur_strength%   &4♥ Health: &c%cur_health%/%max_health%   &9✎ Mana: &b%cur_mana%/%max_mana%   &3♤ Speed: &b%cur_speed%'
 enchantments:
 lobby-point:
-  x: 0
-  y: 64
-  z: 0
+  x: 20
+  y: 69
+  z: 2
   world: "world"
 host: localhost
 port: 3306
@@ -28,22 +28,6 @@ database: server
 username: root
 password: tc262could984
 table: player_data
-
-#CloudTrade Config
-PluginEnabled: true
-
-#set to 0 for unlimited range.
-max-distance: 10
-
-#must also set max distance to 0 to trade from different worlds
-tradeFromDifferentWorlds: false
-shift-right-click: true
-sprint-click: true
-useCommandsForTrading: true
-displayItemsAfterTrade: true
-bothPlayersMustHavePermissions: false
-tradeAcceptTimeout: 15
-logAllTrades: true
 
 multiplier:
   xp: 1.1
