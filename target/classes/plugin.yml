@@ -1,0 +1,40 @@
+depend: [Citizens, HolographicDisplays, WorldEdit, NBTAPI, TitleAPI]
+softdepend: [PlaceholderAPI]
+name: Mafanation
+version: 1.0
+main: me.TahaCheji.Mafana.Main
+author: TahaCheji
+api-version: 1.16
+
+commands:
+  Spawn:
+  Mf:
+  OreShop:
+  ResetVotes:
+  SkeletonSword:
+  ItemsGui:
+  reboot:
+  CraftingTable:
+  trade:
+  Armor:
+  resetStats:
+  Items:
+  StandTest:
+  Founder:
+  Sell:
+  nick:
+  mobTest:
+  InventoryTest:
+  givepaper:
+    description: /givepaper <player> <amount>
+  configreload:
+    description: /configreload
+  fix:
+    description: /fix
+  iteminfo:
+    description: /iteminfo
+  setowner:
+    description: /setowner <player>
+  clearowner:
+    description: /clearowner
+
