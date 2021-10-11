@@ -141,21 +141,4 @@ public class playerMobData implements Listener {
         pD.save(playerData);
 
     }
-
-    @EventHandler
-    public void onKill(EntityDeathEvent e) throws IOException {
-        Player player = e.getEntity().getKiller();
-       Entity entity = e.getEntity();
-       if(e.getEntity().getKiller() == null) {
-           return;
-       }
-        setMobCollection(player, entity);
-       setAdvancedMobCollection(player, entity);
-       addKillsTotalAmount(player);
-    }
-    @EventHandler
-    public void onDeath(PlayerDeathEvent e ) throws IOException {
-        Player player = e.getEntity();
-        addDeathsTotalAmount(player);
-    }
 }

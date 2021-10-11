@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +30,7 @@ public abstract class MasterBoss {
     private final ItemStack mainItem;
     private final ItemStack[] armor;
     private List<LootItem> lootTable;
+    private List<MasterMob> minions = new ArrayList<>();
 
     LivingEntity entity;
 
@@ -64,11 +66,15 @@ public abstract class MasterBoss {
         this.armor = armor;
     }
 
-    public LivingEntity spawnMob(Location location) {
+    public LivingEntity spawnMob(Location location, Player player) {
+        if(this.entity != null) {
+
+        }
         LivingEntity entity = (LivingEntity) location.getWorld().spawnEntity(location, type);
         entity.setCustomNameVisible(true);
         entity.setCustomName(name + " " + ChatColor.RED + "♥" + maxHealth + "♥");
         entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth);
+        entity.setMaxHealth(maxHealth);
         entity.setHealth(maxHealth);
         if (defense != 0) {
             entity.getAttribute(Attribute.GENERIC_ARMOR).setBaseValue(defense);
@@ -88,6 +94,8 @@ public abstract class MasterBoss {
         NBTUtils.setEntityString(entity, "MobName", name);
         this.entity = entity;
         Main.activeBoss.add(this);
+        Main.playerBossFight.put(player, this);
+        onSpawn(player, entity);
         return entity;
     }
 
@@ -98,11 +106,22 @@ public abstract class MasterBoss {
         }
     }
 
+    public void setEntity(LivingEntity entity) {
+        this.entity = entity;
+    }
 
     public void tryDropLoot(Location location, Player player) {
         for (LootItem item : lootTable) {
             item.tryDropItem(location, player);
         }
+    }
+
+    public void addMinion(MasterMob mob) {
+        minions.add(mob);
+    }
+
+    public List<MasterMob> getMinions() {
+        return minions;
     }
 
     public void setLootTable(LootItem... lootTable) {
@@ -117,6 +136,10 @@ public abstract class MasterBoss {
         return entity;
     }
 
+    public abstract void onSpawn(Player player, Entity entity);
+
+    public abstract void getHit(Player player, Entity entity);
+
     public abstract void onAbilityHit(Player player, Entity entity);
 
     public abstract void passiveAbility(Entity entity);
@@ -126,6 +149,8 @@ public abstract class MasterBoss {
     public abstract void stageTwo(Player player,Entity entity, int health);
 
     public abstract void stageThree(Player player,Entity entity, int health);
+
+    public abstract void onDeath(Player player, Entity entity);
 
     public MasterBoss getMob(String name) {
         if (Objects.equals(name, ChatColor.stripColor(getName()))) {

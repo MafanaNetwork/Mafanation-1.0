@@ -4,6 +4,7 @@ import me.TahaCheji.Mafana.Main;
 import me.TahaCheji.Mafana.crafting.CraftingGui;
 import me.TahaCheji.Mafana.itemData.ItemGui;
 import me.TahaCheji.Mafana.mobData.GameMobsGui;
+import me.TahaCheji.Mafana.mobData.MasterBoss;
 import me.TahaCheji.Mafana.mobData.MasterMob;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -31,7 +32,7 @@ public class MainCommand implements CommandExecutor {
                     if(mob == null) {
                         return true;
                     } else {
-                        mob.spawnMob(player.getLocation());
+                        mob.spawnMob(player.getLocation(), player);
                     }
                 }
             }
@@ -40,6 +41,9 @@ public class MainCommand implements CommandExecutor {
             }
             if(args[0].equalsIgnoreCase("kill")) {
                 for (MasterMob mob : Main.activeMobs) {
+                    mob.killMob();
+                }
+                for (MasterBoss mob : Main.activeBoss) {
                     mob.killMob();
                 }
             }

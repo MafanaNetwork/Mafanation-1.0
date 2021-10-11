@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public abstract class MasterMob{
 
@@ -30,6 +31,8 @@ public abstract class MasterMob{
     private final ItemStack mainItem;
     private final ItemStack[] armor;
     private List<LootItem> lootTable;
+    private UUID uuid;
+    private MasterSpawn masterSpawn;
 
     LivingEntity entity;
 
@@ -45,6 +48,7 @@ public abstract class MasterMob{
         this.speed = speed;
         this.mainItem = mainItem;
         this.armor = armor;
+        this.uuid = UUID.randomUUID();
         lootTable = Arrays.asList(lootItems);
     }
 
@@ -61,7 +65,7 @@ public abstract class MasterMob{
         this.armor = armor;
     }
 
-    public LivingEntity spawnMob(Location location) {
+    public LivingEntity spawnMob(Location location, Player player) {
         LivingEntity entity = (LivingEntity) location.getWorld().spawnEntity(location, type);
         entity.setCustomNameVisible(true);
         entity.setCustomName(name + " " + ChatColor.RED + "♥" + maxHealth + "♥");
@@ -82,7 +86,7 @@ public abstract class MasterMob{
         inv.setBootsDropChance(0f);
         inv.setItemInMainHand(mainItem);
         inv.setItemInMainHandDropChance(0f);
-        NBTUtils.setEntityString(entity, "MobName", name);
+        NBTUtils.setEntityString(entity, "MobName", uuid.toString());
         this.entity = entity;
         Main.activeMobs.add(this);
         return entity;
@@ -100,6 +104,14 @@ public abstract class MasterMob{
         for (LootItem item : lootTable) {
             item.tryDropItem(location, player);
         }
+    }
+
+    public void setMasterSpawn(MasterSpawn masterSpawn) {
+        this.masterSpawn = masterSpawn;
+    }
+
+    public MasterSpawn getMasterSpawn() {
+        return masterSpawn;
     }
 
     public void setLootTable(LootItem... lootTable) {

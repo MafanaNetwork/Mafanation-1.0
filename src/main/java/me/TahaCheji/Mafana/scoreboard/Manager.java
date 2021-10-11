@@ -25,20 +25,21 @@ public class Manager {
         Objective obj = board.registerNewObjective("Mafanation", "dummy", ChatColor.GRAY + "♧" + ChatColor.GOLD + "Mafana" + ChatColor.GRAY + "♧");
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        /*
+
         Team Location = board.registerNewTeam("Location");
         Location.addEntry(ChatColor.BLACK + "" + ChatColor.BLACK);
-        //String regionName = PlaceholderAPI.setPlaceholders(player, " %worldguard_region_name_capitalized%");
-        Location.setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "Location: " + ChatColor.DARK_GREEN + "★" + ChatColor.GREEN + "regionName" + ChatColor.DARK_GREEN + "★");
+        String regionName = PlaceholderAPI.setPlaceholders(player, " %worldguard_region_name_capitalized%");
+        Location.setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "Location: " + ChatColor.DARK_GREEN + "★" + ChatColor.GREEN + regionName + ChatColor.DARK_GREEN + "★");
         obj.getScore(ChatColor.BLACK + "" + ChatColor.BLACK).setScore(15);
 
-         */
 
 
         Team Season = board.registerNewTeam("Season");
         Season.addEntry(ChatColor.BLACK + "" + ChatColor.WHITE);
-        Season.setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "Season: " + ChatColor.WHITE + "null" + " " +
-                "null" + "/30"
+        String day = PlaceholderAPI.setPlaceholders(player, "%seasons_day%");
+        String season = PlaceholderAPI.setPlaceholders(player, "%seasons_season%");
+        Season.setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "Season: " + ChatColor.WHITE + season + " " +
+                day + "/30"
         );
         obj.getScore(ChatColor.BLACK + "" + ChatColor.WHITE).setScore(14);
 
@@ -50,15 +51,15 @@ public class Manager {
 
         Team job = board.registerNewTeam("Job");
         job.addEntry(ChatColor.BLACK + "" + ChatColor.BLUE);
-        //String jobName = PlaceholderAPI.setPlaceholders(player, "%jobsr_user_jobs%");
-        //String jobQuest = PlaceholderAPI.setPlaceholders(player, " %jobsr_user_quests%");
-        job.setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "Job: " + ChatColor.WHITE + "jobName");
+        String jobName = PlaceholderAPI.setPlaceholders(player, "%jobsr_user_jobs%");
+        String jobQuest = PlaceholderAPI.setPlaceholders(player, " %jobsr_user_quests%");
+        job.setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "Job: " + ChatColor.WHITE + jobName);
         obj.getScore(ChatColor.BLACK + "" + ChatColor.BLUE).setScore(12);
 
 
         Team jobQuestLine = board.registerNewTeam("jobQuestLine");
         jobQuestLine.addEntry(ChatColor.WHITE + "" + ChatColor.BLUE);
-        jobQuestLine.setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "JobQuest:" + ChatColor.WHITE + "jobQuest");
+        jobQuestLine.setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "JobQuest:" + ChatColor.WHITE + jobQuest);
         obj.getScore(ChatColor.WHITE + "" + ChatColor.BLUE).setScore(11);
 
 
@@ -78,14 +79,20 @@ public class Manager {
         Scoreboard board = player.getScoreboard();
         Economy economy = Main.getEcon();
 
-        //String regionName = PlaceholderAPI.setPlaceholders(player, "%worldguard_region_name_capitalized%");
-        //board.getTeam("Location").setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "Location: " + ChatColor.DARK_GREEN + "★" + ChatColor.GREEN + "regionName" + ChatColor.DARK_GREEN + "★");
+        String regionName = PlaceholderAPI.setPlaceholders(player, "%worldguard_region_name_capitalized%");
+        board.getTeam("Location").setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "Location: " + ChatColor.DARK_GREEN + "★" + ChatColor.GREEN + regionName + ChatColor.DARK_GREEN + "★");
         board.getTeam("Coins").setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "Coins: " + ChatColor.WHITE +  "$" + format.format(economy.getBalance(player)));
 
-        //String jobName = PlaceholderAPI.setPlaceholders(player, "%jobsr_user_jobs%");
-       // String jobQuest = PlaceholderAPI.setPlaceholders(player, " %jobsr_user_quests%");
-        board.getTeam("Job").setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "Job: " + ChatColor.WHITE + "jobName");
-        board.getTeam("jobQuestLine").setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "JobQuest:" + ChatColor.WHITE + "jobQuest");
+        String day = PlaceholderAPI.setPlaceholders(player, "%seasons_day%");
+        String season = PlaceholderAPI.setPlaceholders(player, "%seasons_season%");
+        board.getTeam("Season").setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "Season: " + ChatColor.WHITE + season + " " +
+                day + "/30"
+        );
+
+        String jobName = PlaceholderAPI.setPlaceholders(player, "%jobsr_user_jobs%");
+        String jobQuest = PlaceholderAPI.setPlaceholders(player, " %jobsr_user_quests%");
+        board.getTeam("Job").setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "Job: " + ChatColor.WHITE + jobName);
+        board.getTeam("jobQuestLine").setPrefix(ChatColor.GRAY + ">> " + ChatColor.GOLD + "JobQuest: " + ChatColor.WHITE + jobQuest);
     }
 
 

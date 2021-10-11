@@ -137,12 +137,12 @@ public class GameMobsGui implements Listener {
             if(boss == null) {
                 return;
             }
-            boss.spawnMob(player.getLocation());
+            boss.spawnMob(player.getLocation(), player);
             player.sendMessage(ChatColor.GOLD + "Spawned Mob!");
             return;
         }
-        createMob.spawnMob(player.getLocation());
-        player.sendMessage(ChatColor.GOLD + "Spawned Mob!");
+        createMob.spawnMob(player.getLocation(), player);
+        player.sendMessage(ChatColor.GOLD + "Spawned Boss!");
     }
 
 }

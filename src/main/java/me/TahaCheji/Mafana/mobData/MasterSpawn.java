@@ -2,33 +2,61 @@ package me.TahaCheji.Mafana.mobData;
 
 import com.google.common.base.Preconditions;
 import me.TahaCheji.Mafana.Main;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class SpawnMob implements Listener {
+public class MasterSpawn {
 
-    private BukkitTask task;
-    private final Map<Entity, MasterMob> entities = new HashMap<>();
-    private final List<Entity> MagicEntities = new ArrayList<>();
+    private final Map<Entity, MasterMob> masterMobMap = new HashMap<>();
+    private final Map<Entity, MasterBoss> masterBossMap = new HashMap<>();
 
-    public SpawnMob spawnMobs(int mobCap, int spawnTime, Location radius1, Location radius2, MasterMob... createMob) {
-        MasterMob[] mobTypes = createMob.clone();
-        task = new BukkitRunnable() {
-            final Set<Entity> spawned = entities.keySet();
+    private List<MasterMob> masterMobList = new ArrayList<>();
+    private List<MasterBoss> masterBossList = new ArrayList<>();
+    private MasterMob mob;
+    private MasterBoss boss;
+    private int mobCap;
+    private int spawnTime;
+    private Location radius1;
+    private Location radius2;
+    private Location location;
+
+    public MasterSpawn(int mobCap, int spawnTime, Location radius1, Location radius2, MasterMob... mobs) {
+        this.mobCap = mobCap;
+        this.spawnTime = spawnTime;
+        this.radius1 = radius1;
+        this.radius2 = radius2;
+        this.masterMobList = Arrays.asList(mobs);
+    }
+
+    public MasterSpawn(int mobCap, int spawnTime, Location radius1, Location radius2, MasterBoss... bosses) {
+        this.mobCap = mobCap;
+        this.spawnTime = spawnTime;
+        this.radius1 = radius1;
+        this.radius2 = radius2;
+        this.masterBossList = Arrays.asList(bosses);
+    }
+
+    public MasterSpawn(Location location, MasterMob mobs) {
+        this.location = location;
+        this.mob = mobs;
+    }
+
+    public MasterSpawn(Location location, MasterBoss boss) {
+        this.location = location;
+        this.boss = boss;
+    }
+
+    public void spawnMasterMobs() {
+        BukkitTask task = new BukkitRunnable() {
+            final Set<Entity> spawned = masterMobMap.keySet();
             final List<Entity> removal = new ArrayList<>();
+
             @Override
             public void run() {
                 for (Entity entity : spawned) {
@@ -36,7 +64,7 @@ public class SpawnMob implements Listener {
                 }
                 spawned.removeAll(removal);
                 // Spawning Algorithm
-                int diff = mobCap - entities.size();
+                int diff = mobCap - masterMobMap.size();
                 if (diff <= 0) return;
                 int spawnAmount = (int) (Math.random() * (diff + 1)), count = 0;
                 while (count <= spawnAmount) {
@@ -44,34 +72,33 @@ public class SpawnMob implements Listener {
                     Location location = getRandomLocation(radius1, radius2);
                     if (!isSpawnable(location)) continue;
                     double random = Math.random() * 101, previous = 0;
-                    MasterMob typeToSpawn = mobTypes[0];
-                    for (MasterMob type : mobTypes) {
+                    MasterMob typeToSpawn = masterMobList.get(0);
+                    for (MasterMob type : masterMobList) {
                         previous += type.getSpawnChance();
                         if (random <= previous) {
                             typeToSpawn = type;
                             break;
                         }
                     }
-                    entities.put(typeToSpawn.spawnMob(location), typeToSpawn);
+                    masterMobMap.put(typeToSpawn.spawnMob(location, null), typeToSpawn);
                 }
             }
         }.runTaskTimer(Main.getInstance(), 0L, spawnTime * 20);
-        return null;
     }
 
-
-    /*
-    public SpawnMob spawnMagicMobs(int mobCap, int spawnTime, Location radius1, Location radius2, CreateMagicMob createMob) {
-        task = new BukkitRunnable() {
+    public void spawnBossesMobs() {
+        BukkitTask task = new BukkitRunnable() {
+            final Set<Entity> spawned = masterBossMap.keySet();
             final List<Entity> removal = new ArrayList<>();
+
             @Override
             public void run() {
-                for (Entity entity : MagicEntities) {
+                for (Entity entity : spawned) {
                     if (!entity.isValid() || entity.isDead()) removal.add(entity);
                 }
-                MagicEntities.removeAll(removal);
+                spawned.removeAll(removal);
                 // Spawning Algorithm
-                int diff = mobCap - MagicEntities.size();
+                int diff = mobCap - masterBossMap.size();
                 if (diff <= 0) return;
                 int spawnAmount = (int) (Math.random() * (diff + 1)), count = 0;
                 while (count <= spawnAmount) {
@@ -79,45 +106,31 @@ public class SpawnMob implements Listener {
                     Location location = getRandomLocation(radius1, radius2);
                     if (!isSpawnable(location)) continue;
                     double random = Math.random() * 101, previous = 0;
-                  //  MagicEntities.add(createMob.spawnMob(location).getEntity());
+                    MasterBoss typeToSpawn = masterBossList.get(0);
+                    for (MasterBoss type : masterBossList) {
+                        previous += type.getSpawnChance();
+                        if (random <= previous) {
+                            typeToSpawn = type;
+                            break;
+                        }
+                    }
+                    masterBossMap.put(typeToSpawn.spawnMob(location, null), typeToSpawn);
                 }
             }
         }.runTaskTimer(Main.getInstance(), 0L, spawnTime * 20);
-               return null;
     }
 
-     */
-
-
-    public SpawnMob spawnMob(Location location, MasterMob createMob) {
-        Set<Entity> spawned = entities.keySet();
-        List<Entity> removal = new ArrayList<>();
-        for (Entity entity : spawned) {
-            if (!entity.isValid() || entity.isDead()) removal.add(entity);
-        }
-        spawned.removeAll(removal);
-        Entity entity = createMob.spawnMob(location);
-        entities.put(entity, createMob);
-        return null;
+    public void spawnMasterMob() {
+        mob.spawnMob(location, null);
     }
 
-
-    public SpawnMob spawnNPC(Location location, CreateNPC createNPC, Player player) {
-        createNPC.spawnNPC(location, player);
-        return null;
+    public void spawnMasterBoss() {
+        boss.spawnMob(location, null);
     }
-
-
 
     private boolean isSpawnable(Location loc) {
         Block feetBlock = loc.getBlock(), headBlock = loc.clone().add(0, 1, 0).getBlock(), upperBlock = loc.clone().add(0, 2, 0).getBlock();
-        return feetBlock.isPassable() &&  !feetBlock.isLiquid() && headBlock.isPassable() && !headBlock.isLiquid() && upperBlock.isPassable() && !upperBlock.isLiquid();
-    }
-
-    private double getRandomOffset() {
-        double random = Math.random();
-        if (Math.random() > 0.5) random *= -1;
-        return random;
+        return feetBlock.isPassable() && !feetBlock.isLiquid() && headBlock.isPassable() && !headBlock.isLiquid() && upperBlock.isPassable() && !upperBlock.isLiquid();
     }
 
     public static Location getRandomLocation(Location loc1, Location loc2) {
@@ -133,12 +146,6 @@ public class SpawnMob implements Listener {
 
     public static double randomDouble(double min, double max) {
         return min + ThreadLocalRandom.current().nextDouble(Math.abs(max - min + 1));
-    }
-
-    private int getRandomWithNeg(int size) {
-        int random = (int) (Math.random() * (size + 1));
-        if (Math.random() > 0.5) random *= -1;
-        return random;
     }
 
 }

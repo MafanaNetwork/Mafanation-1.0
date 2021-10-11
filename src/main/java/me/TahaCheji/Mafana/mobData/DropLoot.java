@@ -40,8 +40,36 @@ public class DropLoot implements Listener {
             if(!(NBTUtils.getEntityString(entity, "MobName").equalsIgnoreCase(mob.getName()))) {
                 continue;
             }
+            if(mob.getLootTable() == null) {
+                continue;
+            }
             mob.tryDropLoot(entity.getLocation(), player);
             Main.activeMobs.remove(mob);
+        }
+
+        for(MasterBoss mob : Main.gameBosses) {
+            if(entity instanceof Player) {
+                continue;
+            }
+            if(entity.getCustomName() == null) {
+                continue;
+            }
+            NBTCompound nbt = new NBTEntity(entity).getPersistentDataContainer();
+            if(!(nbt.hasKey("MobName"))) {
+                continue;
+            }
+            if(!(NBTUtils.getEntityString(entity, "MobName").equalsIgnoreCase(mob.getName()))) {
+                continue;
+            }
+            if(mob.getLootTable() == null) {
+                continue;
+            }
+            for(MasterMob minions : mob.getMinions()) {
+                minions.killMob();
+            }
+            mob.onDeath(player, entity);
+            mob.tryDropLoot(entity.getLocation(), player);
+            Main.activeBoss.remove(mob);
         }
     }
 

@@ -1,6 +1,8 @@
 package me.TahaCheji.Mafana.stats;
 
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
+import me.TahaCheji.Mafana.itemData.ItemType;
 import me.TahaCheji.Mafana.utils.Files;
 import me.TahaCheji.Mafana.utils.NBTUtils;
 import org.bukkit.attribute.Attribute;

@@ -16,7 +16,7 @@ public class GolladorChestplate extends MasterArmor {
     public GolladorChestplate() {
         super(Material.CHAINMAIL_CHESTPLATE, "GolladorChestplate", ItemType.CHESTPLATE, RarityType.OBSIDAIN, null ,
                 50, 55, 25, 5, true, true, null, "AHHHHHHHHH");
-        setRecipe(new MasterTable(new GolladorStand().getItem(), 2, null, 1, null, 1, null, 1, null, 1,
+        setRecipe(new MasterTable(new GolladorStand().getItem(), 1, null, 1, null, 1, null, 1, null, 1,
                 null, 1, null, 1, null ,1, null, 1, getItem()));
     }
 }

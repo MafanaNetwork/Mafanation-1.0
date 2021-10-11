@@ -46,13 +46,12 @@ public class Main extends JavaPlugin {
     public static List<MasterMaterial> allMaterials = new ArrayList<>();
     public static List<MasterArmor> allArmor = new ArrayList<>();
     public static List<MasterMob> gameMobs = new ArrayList<>();
-
     public static List<MasterMob> activeMobs = new ArrayList<>();
-
     public static List<MasterBoss> gameBosses = new ArrayList<>();
     public static List<MasterBoss> activeBoss = new ArrayList<>();
-
     public static List<ArmorStand> armorStands = new ArrayList<>();
+
+    public static HashMap<Player, MasterBoss> playerBossFight = new HashMap<>();
 
 
 
@@ -100,6 +99,9 @@ public class Main extends JavaPlugin {
             try {
                 MasterMob shopUtl = (MasterMob) clazz.getDeclaredConstructor().newInstance();
                 shopUtl.registerMob();
+                if(shopUtl.getMasterSpawn() != null) {
+                    shopUtl.getMasterSpawn().spawnMasterMob();
+                }
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
                 e.printStackTrace();
             }
@@ -216,7 +218,7 @@ public class Main extends JavaPlugin {
             pS.setUUID(p.getUniqueId());
             pS.setPlayer(p);
             pS.setMaxHealth(PlayerStats.getTotalHealth(p));
-            pS.setCurrentHealth(PlayerStats.getTotalHealth(p));
+            pS.setCurrentHealth(p.getMaxHealth());
             pS.setMaxIntelligence(PlayerStats.getTotalIntelligence(p));
             pS.setSpeed(PlayerStats.getSpeed(pS.getPlayer()));
             pS.setCurrentIntelligence(pS.getMaxIntelligence());
@@ -370,7 +372,7 @@ public class Main extends JavaPlugin {
     }
      */
 
-    private void regeneratePlayerStats() {
+    public void regeneratePlayerStats() {
         for (UUID pUUID : PlayerStats.playerStats.keySet()) {
             PlayerStats pS = PlayerStats.playerStats.get(pUUID);
             if (!pS.getPlayer().isDead()) {
@@ -387,6 +389,15 @@ public class Main extends JavaPlugin {
                 pS.getPlayer().playSound(pS.getPlayer().getLocation(), Sound.BLOCK_ANVIL_HIT, 10, 10);
                 pS.setCurrentHealth(100);
                 regeneratePlayerStats();
+                MasterBoss masterBoss = playerBossFight.get(pS.getPlayer());
+                if(masterBoss != null) {
+                    masterBoss.killMob();
+                    pS.getPlayer().sendMessage(ChatColor.RED + "You Failed");
+                    playerBossFight.remove(pS.getPlayer(), masterBoss);
+                    for(MasterMob minions : masterBoss.getMinions()) {
+                        minions.killMob();
+                    }
+                }
             }
         }
     }

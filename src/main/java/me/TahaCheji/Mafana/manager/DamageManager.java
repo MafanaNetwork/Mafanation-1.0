@@ -1,7 +1,11 @@
 package me.TahaCheji.Mafana.manager;
 
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTEntity;
 import me.TahaCheji.Mafana.Main;
 import me.TahaCheji.Mafana.itemData.MasterAbility;
+import me.TahaCheji.Mafana.mobData.MasterBoss;
+import me.TahaCheji.Mafana.utils.NBTUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -48,13 +52,46 @@ public class DamageManager {
             armorStand.setGravity(false);
             armorStand.setSmall(true);
             armorStand.setCustomNameVisible(true);
-            armorStand.setCustomName(ChatColor.DARK_PURPLE + "✧" + damage);
+            armorStand.setCustomName(ChatColor.GOLD + "✧" + damage);
             Main.armorStands.add(armorStand);
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                 Main.armorStands.add(armorStand);
                 armorStand.remove();
             },20);
         });
+        double heath = ((LivingEntity) target).getHealth();
+        if(heath <= damage) {
+            target.setKiller(damager);
+            return;
+        }
+        heath -= damage;
+        target.setCustomName(ChatColor.translateAlternateColorCodes('&',
+                target.getName().split(" ")[0] + ChatColor.RED + " ♥" +
+                        ChatColor.RED + format.format((int) heath) + ChatColor.RED + "♥"));
+        for (MasterBoss mob : Main.activeBoss) {
+            if (target instanceof Player) {
+                continue;
+            }
+            if (target.getCustomName() == null) {
+                continue;
+            }
+            NBTCompound nbt = new NBTEntity(target).getPersistentDataContainer();
+            if (!(nbt.hasKey("MobName"))) {
+                continue;
+            }
+            if (!(NBTUtils.getEntityString(target, "MobName").equalsIgnoreCase(mob.getName()))) {
+                continue;
+            }
+            if(!mob.stageOne) {
+                mob.stageOne(damager, target, (int) target.getHealth());
+            }
+            if(!mob.stageTwo && mob.stageOne) {
+                mob.stageTwo(damager, target, (int) target.getHealth());
+            }
+            if(!mob.stageThree && mob.stageTwo && mob.stageOne) {
+                mob.stageThree(damager, target, (int) target.getHealth());
+            }
+        }
     }
 
     public void hitDamage() {
@@ -70,7 +107,7 @@ public class DamageManager {
             armorStand.setGravity(false);
             armorStand.setSmall(true);
             armorStand.setCustomNameVisible(true);
-            armorStand.setCustomName(ChatColor.RED + "✧" + damage);
+            armorStand.setCustomName(ChatColor.RED + "*" + damage);
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                 Main.armorStands.add(armorStand);
                 armorStand.remove();
@@ -85,6 +122,30 @@ public class DamageManager {
         target.setCustomName(ChatColor.translateAlternateColorCodes('&',
                 target.getName().split(" ")[0] + ChatColor.RED + " ♥" +
                         ChatColor.RED + format.format((int) heath) + ChatColor.RED + "♥"));
+        for (MasterBoss mob : Main.activeBoss) {
+            if (target instanceof Player) {
+                continue;
+            }
+            if (target.getCustomName() == null) {
+                continue;
+            }
+            NBTCompound nbt = new NBTEntity(target).getPersistentDataContainer();
+            if (!(nbt.hasKey("MobName"))) {
+                continue;
+            }
+            if (!(NBTUtils.getEntityString(target, "MobName").equalsIgnoreCase(mob.getName()))) {
+                continue;
+            }
+            if(!mob.stageOne) {
+                mob.stageOne(damager, target, (int) target.getHealth());
+            }
+            if(!mob.stageTwo && mob.stageOne) {
+                mob.stageTwo(damager, target, (int) target.getHealth());
+            }
+            if(!mob.stageThree && mob.stageTwo && mob.stageOne) {
+                mob.stageThree(damager, target, (int) target.getHealth());
+            }
+        }
     }
 
 
